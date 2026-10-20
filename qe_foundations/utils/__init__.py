@@ -10,7 +10,7 @@ __all__ = [
     "normalize_whitespace",
     "slugify",
     "is_valid_email",
-    " mask_email",
+    "mask_email",
     # numbers
     "is_positive_int",
     "clamp",
