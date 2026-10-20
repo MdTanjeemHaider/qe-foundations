@@ -15,3 +15,13 @@ def slugify(text):
 def is_valid_email(email):
     """True when email has exactly one '@' and a '.' in the domain part."""
     return email.count("@") == 1 and "." in email.split("@")[1]
+
+def mask_email(email):
+    """Hides the user part of an email for safe logging of test data."""
+    if not is_valid_email(email):
+        return email
+
+    prefix, suffix = email.split("@")
+    prefix = f"{prefix[0]}{"*"*3}"
+
+    return prefix + "@" + suffix
