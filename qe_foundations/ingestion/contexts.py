@@ -19,14 +19,25 @@ def open_source(path):
     """Open a text file for reading and translate low-level errors into ours.
 
     Requirements (README Task 3A):
-      * encoding "utf-8-sig" (drops the Excel BOM) and newline="" (csv module).
-      * missing file                     -> SourceNotFoundError   (keep the cause: `from error`)
-      * any other OSError on open        -> SourceUnreadableError (keep the cause)
-      * UnicodeDecodeError while reading -> MalformedSourceError  (keep the cause)
-      * the file is ALWAYS closed, even when the with-body raises.
+    * encoding "utf-8-sig" (drops the Excel BOM) and newline="" (csv module).
+    * missing file                     -> SourceNotFoundError   (keep the cause: `from error`)
+    * any other OSError on open        -> SourceUnreadableError (keep the cause)
+    * UnicodeDecodeError while reading -> MalformedSourceError  (keep the cause)
+    * the file is ALWAYS closed, even when the with-body raises.
     """
-    raise NotImplementedError("Task 3A: write open_source")
-    yield  # this line only makes Python treat the function as a generator; keep it
+    try:
+        file = open(path, 'r', encoding="utf-8-sig", newline="")
+    except FileNotFoundError as e:
+        raise SourceNotFoundError(path) from e
+    except OSError as e:
+        raise SourceUnreadableError(path, e) from e
+
+    try:
+        yield file
+    except UnicodeDecodeError as e:
+        raise MalformedSourceError(path, e) from e
+    finally:
+        file.close()
 
 
 class LoadSession:
@@ -44,7 +55,15 @@ class LoadSession:
         self.elapsed = None
 
     def __enter__(self):
-        raise NotImplementedError("Task 3B: write LoadSession.__enter__")
+        self.begin = time.perf_counter()
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        raise NotImplementedError("Task 3B: write LoadSession.__exit__")
+        self.end = time.perf_counter()
+        self.elapsed = self.end - self.begin
+        if exc_type == None:
+            self.outcome = "completed"
+        else:
+            self.outcome = "failed"
+            return False
+
