@@ -20,14 +20,62 @@ from .validation import REQUIRED_FIELDS
 
 def read_csv_records(path):
     """CSV -> list of raw dicts, one per data row (use csv.DictReader)."""
-    raise NotImplementedError("Task 4A: write read_csv_records")
+    with open_source(path) as file:
+        reader = csv.DictReader(file)
+        field_names = reader.fieldnames
+
+        missing = []
+        if field_names == None:
+            missing = list(REQUIRED_FIELDS)
+            raise MissingColumnsError(path, missing)
+
+        for field_name in REQUIRED_FIELDS:
+            if field_name not in field_names:
+                missing.append(field_name)
+
+        if missing:
+            raise MissingColumnsError(path, missing)
+
+        return list(reader)
 
 
 def read_json_records(path):
     """JSON -> list of raw records. Expected shape: {"suite": ..., "tests": [...]}."""
-    raise NotImplementedError("Task 4B: write read_json_records")
+    with open_source(path) as file:
+        try:
+            data = json.load(file)
+        except json.JSONDecodeError as e:
+            raise MalformedSourceError(path, f"invalid JSON at line {e.lineno} column {e.colno}: {e.msg}") from e
 
+        if not isinstance(data, dict):
+            raise MalformedSourceError(path, "the top level is not an object")
+
+        if "tests" not in data:
+            raise MalformedSourceError(path, "missing 'tests' key")
+
+        tests = data["tests"]
+        if not isinstance(tests, list):
+            raise MalformedSourceError(path, "not a list")
+
+        return data["tests"]
 
 def read_xml_records(path):
     """XML -> list of raw dicts, one per <testcase> element at ANY depth."""
-    raise NotImplementedError("Task 4C: write read_xml_records")
+    with open_source(path) as file:
+        try:
+            root = ET.parse(file).getroot()
+        except ET.ParseError as e:
+            raise MalformedSourceError(path, e) from e
+
+        records = []
+        for case in root.iter("testcase"):
+            records.append(
+                {
+                    "id": case.attrib.get("id"),
+                    "status": case.attrib.get("status"),
+                    "title": case.findtext("title"),
+                    "duration": case.findtext("duration")
+                }
+            )
+
+        return records
