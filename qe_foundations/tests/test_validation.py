@@ -36,26 +36,42 @@ class ValidationRunnerTests(unittest.TestCase):
     # ---- TODO: replace each self.fail with a real test ----------------------
     def test_run_rule_returns_rows_when_rule_holds(self):
         # Arrange: a Rule whose SQL returns no rows (e.g. WHERE run_id = -1) and expect=0
+        from qe_foundations.validation.runner import Rule
+        rule = Rule(rule_id="T-48", dimension="validity", description="something", sql="SELECT * FROM test_runs WHERE run_id = -1", expect=0)
         # Act:     runner.run_rule(self.conn, rule)
+        rows = runner.run_rule(self.conn, rule)
         # Assert:  the result is an empty list and no exception was raised
-        self.fail("TODO: write this test")
+        self.assertEqual(rows, [])
 
     def test_run_rule_raises_validation_failed_error_with_the_evidence(self):
         # Arrange: a Rule whose SQL returns run 5003 (WHERE run_id = 5003), expect=0
+        from qe_foundations.validation.runner import Rule
+        rule = Rule(rule_id="T-49", dimension="validity", description="something", sql="SELECT * FROM test_runs WHERE run_id = 5003", expect=0)
         # Act/Assert: with self.assertRaises(ValidationFailedError) as ctx: ...
         #             then assert ctx.exception.rule_id and ctx.exception.rows
-        self.fail("TODO: write this test")
+        with self.assertRaises(ValidationFailedError) as ctx:
+            runner.run_rule(self.conn, rule)
 
     def test_duration_rule_catches_the_known_bad_runs(self):
         # Arrange: find rule R-04 in runner.parse_rules()
+        rule = None
+        for r in runner.parse_rules():
+            if r.rule_id == "R-04":
+                rule = r
         # Act:     rows = runner.fetch_rows(self.conn, rule.sql)[1]
+        rows = runner.fetch_rows(self.conn, rule.sql)[1]
         # Assert:  the run_ids you PREDICTED (from your own defect checklist) are returned
-        self.fail("TODO: write this test")
+        expected_run_ids = [5009, 5016]
+        for row in rows:
+            self.assertIn(row[0], expected_run_ids)
 
     def test_expectation_rule_fails_when_the_expected_row_is_missing(self):
         # Arrange: a Rule with expect=1 whose SQL matches NOTHING (WHERE run_id = -1)
+        from qe_foundations.validation.runner import Rule
         # Assert:  run_rule raises ValidationFailedError
-        self.fail("TODO: write this test")
+        rule = Rule(rule_id="T-50", dimension="validity", description="something", sql="SELECT * FROM test_runs WHERE run_id = -3298", expect=1)
+        with self.assertRaises(ValidationFailedError) as ctx:
+            runner.run_rule(self.conn, rule)
 
 
 if __name__ == "__main__":
