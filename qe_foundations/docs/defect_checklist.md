@@ -19,12 +19,12 @@ check_exercise.py compares this table with what your queries return.
 | R-06 | 2                       | 2                          |                   |
 | R-07 | 3                       | 3                          |                   |
 | R-08 | 3                       | 3                          |                   |
-| R-09 |                         |                            |                   |
-| R-10 |                         |                            |                   |
-| R-11 |                         |                            |                   |
-| R-12 |                         |                            |                   |
-| E-01 |                         |                            |                   |
-| E-02 |                         |                            |                   |
+| R-09 | 3                       | 3                          |                   |
+| R-10 | 2                       | 2                          |                   |
+| R-11 | 3                       | 3                          |                   |
+| R-12 | 4                       | 4                          |                   |
+| E-01 | 1                       | 1                          |                   |
+| E-02 | 1                       | 1                          |                   |
 
 ## Decoys: rows that look odd but are LEGAL (we must not flag them)
 
