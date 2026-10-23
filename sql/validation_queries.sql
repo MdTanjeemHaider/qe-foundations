@@ -53,25 +53,26 @@ WHERE duration_ms IS NULL OR duration_ms < 0;
 -- TODO: a plain threshold. Show the worst first (ORDER BY ... DESC).
 SELECT run_id
 FROM test_runs
-WHERE 1 = 0;
+WHERE duration_ms > 600000
+ORDER BY duration_ms DESC;
 
 -- @rule R-06 | Validity | retries must be present and between 0 and 3 inclusive
 -- TODO: a range with BETWEEN -- and what happens to NULL?
 SELECT run_id
 FROM test_runs
-WHERE 1 = 0;
+WHERE retries IS NULL OR retries < 0 OR retries > 3;
 
 -- @rule R-07 | Validity | environment must be exactly DEV, QA or STAGING
 -- TODO: exact, case-sensitive list; 'qa' is not 'QA' for = / IN in SQLite.
 SELECT run_id
 FROM test_runs
-WHERE 1 = 0;
+WHERE environment NOT IN ('DEV', 'QA', 'STAGING') OR environment IS NULL;
 
 -- @rule R-08 | Consistency | test_name, suite and status must have no leading/trailing spaces
 -- TODO: a value that changes when you TRIM it has stray spaces. Three columns -> OR.
 SELECT run_id
 FROM test_runs
-WHERE 1 = 0;
+WHERE TRIM(test_name) <> test_name OR TRIM(suite) <> suite OR TRIM(status) <> status;
 
 -- @rule R-09 | Validity | started_at and finished_at must be present and shaped 'YYYY-MM-DD HH:MM:SS'
 -- TODO: the LIKE pattern _ matches exactly one character; these timestamps are 19 characters long.

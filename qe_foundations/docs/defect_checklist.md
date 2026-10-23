@@ -15,10 +15,10 @@ check_exercise.py compares this table with what your queries return.
 | R-02 | 2                       | 2                          |                   |
 | R-03 | 4                       | 4                          |                   |
 | R-04 | 2                       | 2                          |                   |
-| R-05 |                         |                            |                   |
-| R-06 |                         |                            |                   |
-| R-07 |                         |                            |                   |
-| R-08 |                         |                            |                   |
+| R-05 | 2                       | 2                          |                   |
+| R-06 | 2                       | 2                          |                   |
+| R-07 | 3                       | 3                          |                   |
+| R-08 | 3                       | 3                          |                   |
 | R-09 |                         |                            |                   |
 | R-10 |                         |                            |                   |
 | R-11 |                         |                            |                   |
